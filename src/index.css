@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #F5F5F0;
+  /* Isabelline */
+  color: #2D2D2A;
+  /* Charcoal */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom interactions */
+.card-hover:hover {
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.active-tab {
+  border-bottom: 2px solid #D4A373;
+  color: #D4A373;
+  font-weight: 600;
+}
+
+.inactive-tab {
+  color: #8D8D8D;
+}
+
+/* Custom scrollbar for cleanliness */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4A373;
+  border-radius: 4px;
+}
