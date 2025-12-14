@@ -36,8 +36,33 @@ export default {
             },
             borderRadius: {
                 'xl': '0.75rem',
+                '3xl': '1.5rem', // iOS-style rounded corners for Bento UI
+            },
+            spacing: {
+                'safe': 'env(safe-area-inset-bottom)', // iOS safe area for Home Indicator
+                'safe-top': 'env(safe-area-inset-top)', // iOS safe area for notch
+                'safe-bottom': 'env(safe-area-inset-bottom)', // iOS safe area for home indicator
+            },
+            backgroundColor: {
+                'accent-velo': '#D4A373', // Shortcut pour bg-accent-velo
+                'accent-natation': '#607D8B', // Shortcut pour bg-accent-natation
             }
         },
     },
-    plugins: [],
+    plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                '.pb-safe': {
+                    paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))',
+                },
+                '.no-scrollbar': {
+                    '-ms-overflow-style': 'none',
+                    'scrollbar-width': 'none',
+                    '&::-webkit-scrollbar': {
+                        display: 'none'
+                    }
+                }
+            })
+        }
+    ],
 }

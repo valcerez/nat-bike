@@ -108,26 +108,27 @@ export default function DashboardHome() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-bg-main text-text-main pb-24">
+        <div className="min-h-screen flex flex-col bg-bg-main text-text-main pb-32">
 
-            {/* Header */}
-            <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <div>
-                        <h1 className="text-xl md:text-2xl font-bold tracking-tight">
+            {/* iOS-Style Sticky Header with Blur */}
+            <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all border-b border-gray-100">
+                <div className="px-4 py-3">
+                    {/* Title */}
+                    <div className="mb-3">
+                        <h1 className="text-xl font-bold tracking-tight">
                             Prépa Physique <span className="text-accent-primary">Vélo & Natation</span>
                         </h1>
-                        <p className="text-sm text-text-muted hidden md:block">3 Séances/Semaine • Full Body • 55 Minutes</p>
                     </div>
-                    {/* Tabs Navigation (Moved to Header for better Space Usage) */}
-                    <div className="flex space-x-1">
+
+                    {/* iOS Segmented Control - S1/S2/S3 */}
+                    <div className="bg-gray-100 p-1 rounded-full flex">
                         {[1, 2, 3].map(id => (
                             <button
                                 key={id}
                                 onClick={() => setActiveTab(id)}
-                                className={`py-2 px-3 md:px-4 rounded-lg text-sm font-bold transition-all ${activeTab === id
-                                        ? 'bg-text-main text-white shadow-md'
-                                        : 'bg-transparent text-text-muted hover:bg-gray-100'
+                                className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${activeTab === id
+                                        ? 'bg-white text-text-main shadow-sm'
+                                        : 'text-text-muted'
                                     }`}
                             >
                                 S{id}
@@ -137,146 +138,134 @@ export default function DashboardHome() {
                 </div>
             </header>
 
-            <main className="flex-grow max-w-7xl mx-auto px-4 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Single Column Mobile Layout */}
+            <main className="flex-grow px-4 py-4 space-y-4">
 
-                {/* LEFT COL: Content */}
-                <div className="lg:col-span-8 space-y-8">
-
-                    {/* Session Header / Context */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-800">{sessionData?.name}</h2>
-                                <p className="text-accent-primary font-medium">{sessionData?.objective}</p>
-                            </div>
-                            {/* Filters */}
-                            <div className="flex bg-gray-100 p-1 rounded-xl self-start md:self-center">
-                                {['all', 'velo', 'natation'].map(filter => (
-                                    <button
-                                        key={filter}
-                                        onClick={() => setActiveFilter(filter)}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${activeFilter === filter
-                                                ? 'bg-white text-black shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                            }`}
-                                    >
-                                        {filter === 'all' ? 'Tout' : filter}
-                                    </button>
-                                ))}
-                            </div>
+                {/* Session Header Card */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                    <div className="flex flex-col gap-3 mb-4">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-800">{sessionData?.name}</h2>
+                            <p className="text-accent-primary font-medium">{sessionData?.objective}</p>
                         </div>
 
-                        {/* Warmup Mini Card */}
-                        <div className="bg-orange-50 rounded-xl p-3 flex items-center gap-3 border border-orange-100">
-                            <span className="text-2xl">🔥</span>
-                            <div className="text-xs md:text-sm text-orange-800">
-                                <span className="font-bold uppercase">Échauffement :</span> Rameur souple + Rotations articulaires + Squats pdc.
-                            </div>
+                        {/* Filter Segmented Control */}
+                        <div className="flex bg-gray-100 p-1 rounded-xl self-start">
+                            {['all', 'velo', 'natation'].map(filter => (
+                                <button
+                                    key={filter}
+                                    onClick={() => setActiveFilter(filter)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${activeFilter === filter
+                                            ? 'bg-white text-black shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    {filter === 'all' ? 'Tout' : filter}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Dynamic Content - Bento Grid */}
-                    <div className="space-y-8">
-                        {sessionData?.supersets.map((superset, index) => (
-                            <div key={superset.id}>
-                                <div className="flex items-center justify-between mb-4 px-2">
-                                    <h3 className="font-bold text-xl text-gray-800 flex items-center gap-2">
-                                        <span className="w-2 h-8 bg-text-main rounded-full"></span>
-                                        {superset.name}
-                                    </h3>
-                                </div>
-
-                                {/* Grid Layout for BENTO Cards */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {superset.exercises
-                                        .filter(ex => {
-                                            if (activeFilter === 'all') return true;
-                                            if (activeFilter === 'velo') return ex.activity.toLowerCase().includes('vélo') || ex.activity.toLowerCase().includes('deux');
-                                            if (activeFilter === 'natation') return ex.activity.toLowerCase().includes('natation') || ex.activity.toLowerCase().includes('deux');
-                                            return true;
-                                        })
-                                        .map(exo => (
-                                            <div key={exo.id} className="h-full">
-                                                <ExerciseBentoCard
-                                                    exercise={exo}
-                                                    lastPerf={lastPerformances[exo.id]}
-                                                    onValueChange={handleValueChange}
-                                                />
-                                            </div>
-                                        ))}
-                                </div>
-
-                                {/* Rest Separator */}
-                                {index < sessionData.supersets.length - 1 && (
-                                    <div className="flex items-center justify-center my-6 opacity-50">
-                                        <div className="h-px w-full bg-gray-300"></div>
-                                        <span className="px-4 text-xs font-medium text-gray-500 whitespace-nowrap">Repos 90s</span>
-                                        <div className="h-px w-full bg-gray-300"></div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                    {/* Warmup Mini Card */}
+                    <div className="bg-orange-50 rounded-xl p-3 flex items-center gap-3 border border-orange-100">
+                        <span className="text-2xl">🔥</span>
+                        <div className="text-xs text-orange-800">
+                            <span className="font-bold uppercase">Échauffement :</span> Rameur souple + Rotations articulaires + Squats pdc.
+                        </div>
                     </div>
-
                 </div>
 
-                {/* RIGHT COL: Analytics */}
-                <div className="lg:col-span-4 space-y-6">
-
-                    {/* Charts Container - Desktop Sticky */}
-                    <div className="sticky top-24 space-y-6">
-
-                        {/* Intensity Chart */}
-                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wide">Profil d'Intensité</h3>
-                            <div className="h-40">
-                                <IntensityChart
-                                    data={getIntensityData(activeTab)}
-                                    isHighIntensity={activeTab === 3}
-                                />
-                            </div>
+                {/* Charts Section - Vertical Stack */}
+                <div className="space-y-4">
+                    {/* Intensity Chart */}
+                    <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wide">Profil d'Intensité</h3>
+                        <div className="h-40">
+                            <IntensityChart
+                                data={getIntensityData(activeTab)}
+                                isHighIntensity={activeTab === 3}
+                            />
                         </div>
-
-                        {/* Muscle Chart */}
-                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wide">Focus Musculaire</h3>
-                            <div className="h-48">
-                                <MuscleChart data={getChartData(activeTab)} />
-                            </div>
-                        </div>
-
-                        {/* Save Button */}
-                        <button
-                            onClick={handleSaveSession}
-                            disabled={saving}
-                            className={`w-full py-4 rounded-2xl font-bold text-white shadow-xl transform transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 ${saveSuccess
-                                    ? 'bg-green-500'
-                                    : 'bg-text-main hover:bg-black'
-                                }`}
-                        >
-                            {saving ? 'Enregistrement...' : saveSuccess ? '✓ Séance Sauvegardée !' : (
-                                <>
-                                    <span>💾</span> Enregistrer la séance
-                                </>
-                            )}
-                        </button>
-
                     </div>
 
+                    {/* Muscle Chart */}
+                    <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wide">Focus Musculaire</h3>
+                        <div className="h-48">
+                            <MuscleChart data={getChartData(activeTab)} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Exercise Cards - Bento Grid */}
+                <div className="space-y-6">
+                    {sessionData?.supersets.map((superset, index) => (
+                        <div key={superset.id}>
+                            <div className="flex items-center justify-between mb-3 px-1">
+                                <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                                    <span className="w-1.5 h-6 bg-text-main rounded-full"></span>
+                                    {superset.name}
+                                </h3>
+                            </div>
+
+                            {/* 2-Column Grid for Mobile */}
+                            <div className="grid grid-cols-2 gap-3">
+                                {superset.exercises
+                                    .filter(ex => {
+                                        if (activeFilter === 'all') return true;
+                                        if (activeFilter === 'velo') return ex.activity.toLowerCase().includes('vélo') || ex.activity.toLowerCase().includes('deux');
+                                        if (activeFilter === 'natation') return ex.activity.toLowerCase().includes('natation') || ex.activity.toLowerCase().includes('deux');
+                                        return true;
+                                    })
+                                    .map(exo => (
+                                        <div key={exo.id} className="h-full">
+                                            <ExerciseBentoCard
+                                                exercise={exo}
+                                                lastPerf={lastPerformances[exo.id]}
+                                                onValueChange={handleValueChange}
+                                            />
+                                        </div>
+                                    ))}
+                            </div>
+
+                            {/* Rest Separator */}
+                            {index < sessionData.supersets.length - 1 && (
+                                <div className="flex items-center justify-center my-5 opacity-50">
+                                    <div className="h-px w-full bg-gray-300"></div>
+                                    <span className="px-4 text-xs font-medium text-gray-500 whitespace-nowrap">Repos 90s</span>
+                                    <div className="h-px w-full bg-gray-300"></div>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
             </main>
 
-            {/* Mobile Save Floating Button */}
-            <div className="lg:hidden fixed bottom-6 left-6 right-6 z-40">
-                <button
-                    onClick={handleSaveSession}
-                    disabled={saving}
-                    className={`w-full py-4 rounded-2xl font-bold text-white shadow-2xl backdrop-blur-sm flex items-center justify-center gap-2 ${saveSuccess ? 'bg-green-500' : 'bg-gray-900/90'
-                        }`}
-                >
-                    {saving ? '...' : saveSuccess ? '✓' : '💾 Sauvegarder'}
-                </button>
+            {/* Fixed Bottom Save Button with Safe Area */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-gray-200 pb-safe">
+                <div className="px-4 py-3">
+                    <button
+                        onClick={handleSaveSession}
+                        disabled={saving}
+                        className={`w-full py-4 rounded-3xl font-bold text-white shadow-lg transform transition-all active:scale-95 flex items-center justify-center gap-2 min-h-[44px] ${saveSuccess
+                                ? 'bg-green-500'
+                                : 'bg-text-main hover:bg-black'
+                            }`}
+                    >
+                        {saving ? (
+                            'Enregistrement...'
+                        ) : saveSuccess ? (
+                            <>
+                                <span>✓</span> Séance Sauvegardée !
+                            </>
+                        ) : (
+                            <>
+                                <span>💾</span> Enregistrer la séance
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
 
         </div>

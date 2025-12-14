@@ -9,89 +9,121 @@ export default function ExerciseBentoCard({ exercise, lastPerf, onValueChange })
     }
 
     // Déterminer le style selon l'activité
-    let accentColor = 'text-gray-400';
-    let bgColor = 'bg-white';
-    let typeIcon = '⚡';
-
-    if (exercise.activity.toLowerCase().includes('vélo')) {
-        accentColor = 'text-accent-primary'; // Beige
-        typeIcon = '🚴';
-    } else if (exercise.activity.toLowerCase().includes('natation')) {
-        accentColor = 'text-accent-secondary'; // Bleu Gris
-        typeIcon = '🏊';
-    }
-
-    const getInputPlaceholder = () => {
-        switch (exercise.inputType) {
-            case 'weight': return '0';
-            case 'reps': return '0';
-            case 'time': return '00:00';
-            default: return '';
+    const getActivityStyle = () => {
+        const act = exercise.activity.toLowerCase()
+        if (act.includes('deux')) {
+            return {
+                bg: 'bg-purple-50',
+                border: 'border-purple-200',
+                text: 'text-purple-700',
+                badge: 'bg-purple-100 text-purple-700',
+                icon: '🚴🏊'
+            }
+        }
+        if (act.includes('vélo')) {
+            return {
+                bg: 'bg-orange-50',
+                border: 'border-orange-200',
+                text: 'text-orange-700',
+                badge: 'bg-orange-100 text-orange-700',
+                icon: '🚴'
+            }
+        }
+        if (act.includes('natation')) {
+            return {
+                bg: 'bg-blue-50',
+                border: 'border-blue-200',
+                text: 'text-blue-700',
+                badge: 'bg-blue-100 text-blue-700',
+                icon: '🏊'
+            }
+        }
+        return {
+            bg: 'bg-gray-50',
+            border: 'border-gray-200',
+            text: 'text-gray-700',
+            badge: 'bg-gray-100 text-gray-700',
+            icon: '⚡'
         }
     }
 
-    const getInputUnit = () => {
-        switch (exercise.inputType) {
-            case 'weight': return 'kg';
-            case 'reps': return 'reps';
-            case 'time': return exercise.unit === 'min:sec' ? 'min' : 'sec';
-            default: return '';
-        }
+    const style = getActivityStyle()
+
+    const getActivityLabel = () => {
+        const act = exercise.activity.toLowerCase()
+        if (act.includes('deux')) return 'Vélo & Natation'
+        if (act.includes('vélo')) return 'Vélo'
+        if (act.includes('natation')) return 'Natation'
+        return exercise.activity
     }
 
     return (
-        <div className="relative group overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between">
+        <div className="bg-white rounded-3xl border-2 border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden h-full flex flex-col">
 
-            {/* Header Card */}
-            <div className="p-5 pb-0 relative z-10">
-                <div className="flex justify-between items-start mb-2">
-                    <span className={`text-2xl p-2 rounded-xl bg-gray-50 bg-opacity-50 ${accentColor}`}>
-                        {typeIcon}
+            {/* Header avec activité */}
+            <div className={`${style.bg} ${style.border} border-b-2 px-4 py-3`}>
+                <div className="flex items-center justify-between gap-2">
+                    <span className="text-2xl">{style.icon}</span>
+                    <span className={`${style.badge} text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full`}>
+                        {getActivityLabel()}
                     </span>
-                    <div className="text-right">
-                        <span className="inline-block bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                </div>
+            </div>
+
+            {/* Contenu principal */}
+            <div className="p-4 flex-grow flex flex-col justify-between">
+
+                {/* Nom de l'exercice */}
+                <div className="mb-3">
+                    <h3 className="font-bold text-base text-gray-900 leading-tight line-clamp-2 mb-1">
+                        {exercise.name}
+                    </h3>
+
+                    {/* Nombre de reps/target */}
+                    <div className="flex items-center gap-1.5 mt-2">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">Objectif:</span>
+                        <span className={`${style.text} text-sm font-bold`}>
                             {exercise.target}
                         </span>
                     </div>
                 </div>
 
-                <h3 className="font-bold text-lg text-text-main leading-tight mb-1">
-                    {exercise.name}
-                </h3>
-                <p className="text-xs text-text-muted line-clamp-2 min-h-[2.5em]">
-                    {exercise.muscles}
-                </p>
-            </div>
+                {/* Encadré de saisie */}
+                <div className="space-y-2">
+                    {/* Dernière performance */}
+                    {lastPerf && (
+                        <div className="bg-gray-50 rounded-xl px-3 py-2 border border-gray-200">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] text-gray-500 uppercase font-semibold tracking-wide">
+                                    Dernière perf
+                                </span>
+                                <span className="text-sm font-bold text-gray-700">
+                                    {lastPerf.value} {exercise.unit}
+                                </span>
+                            </div>
+                        </div>
+                    )}
 
-            {/* Input Zone - Bento Style Bottom */}
-            <div className="mt-4 p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-
-                {/* Last Perf Mini Widget */}
-                <div className="flex flex-col">
-                    <span className="text-[10px] text-gray-400 uppercase font-semibold">Dernier</span>
-                    <span className="text-sm font-bold text-gray-600">
-                        {lastPerf ? `${lastPerf.value} ${exercise.unit}` : '-'}
-                    </span>
+                    {/* Input encadré */}
+                    <div className={`${style.bg} ${style.border} border-2 rounded-xl p-3`}>
+                        <label className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide block mb-2">
+                            Votre performance
+                        </label>
+                        <div className="flex items-center gap-2 bg-white px-3 py-2.5 rounded-lg border-2 border-gray-200 focus-within:border-gray-900 focus-within:shadow-sm transition-all">
+                            <input
+                                type="text"
+                                value={value}
+                                onChange={handleChange}
+                                placeholder="0"
+                                className="w-full bg-transparent text-right font-bold text-gray-900 focus:outline-none text-lg"
+                            />
+                            <span className="text-xs text-gray-500 font-semibold min-w-[40px]">
+                                {exercise.unit}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-
-                {/* Big Input Field */}
-                <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 focus-within:border-accent-primary focus-within:ring-1 focus-within:ring-accent-primary transition-all shadow-sm w-32">
-                    <input
-                        type="text"
-                        value={value}
-                        onChange={handleChange}
-                        placeholder={getInputPlaceholder()}
-                        className="w-full bg-transparent text-right font-bold text-text-main focus:outline-none text-lg"
-                    />
-                    <span className="text-xs text-gray-400 font-medium">
-                        {getInputUnit()}
-                    </span>
-                </div>
-
             </div>
-
-            {/* Background Decor to make it interactive */}
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-transparent to-${exercise.activity.includes('Vélo') ? 'orange' : 'blue'}-50 rounded-bl-[100px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}></div>
         </div>
     )
 }
